@@ -1,0 +1,269 @@
+<html>
+
+<head>
+    <title>Completed sample for turning a Google Spreadsheet into an HTML Table</title>
+    <!-- Add a div where the table will go -->
+
+    <style>
+        .sponsors ul {
+            width: 780px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .sponsors li {
+            line-height: 1.5em;
+            float: left;
+            display: inline;
+        }
+        #double li {
+            width: 50%;
+        }
+        #triple li {
+            width: 33.333%;
+        }
+        #quad li {
+            width: 25%;
+        }
+        #six li {
+            width: 16.666%;
+        }
+    </style>
+
+</head>
+
+<body>
+    <script type='text/javascript'>
+        <!--
+        var allIds = []
+
+        function quotes(string) {
+            return '"' + string + '"';
+        }
+
+        function italic(text) {
+            return '<i>' + text + '</i>';
+        }
+
+        function anchor(id, text, url) {
+            return '<a id=' + quotes(id) + ' href=' + quotes(url) + ' target="_blank">' + text + '</a>';
+        }
+
+        function div(id, text, style) {
+            return '<div id=' + quotes(id) + '>' + text + '</div>'
+        }
+
+        function br(count) {
+            count = count || 0;
+
+            var retval = '<br/>';
+
+            while (count) {
+                retval += '<br/>';
+                count--;
+            }
+
+            return retval;
+        }
+
+        function nbsp(count) {
+            count = count || 0;
+
+            var retval = 'nbsp;';
+
+            while (count) {
+                retval += 'nbsp;';
+                count--;
+            }
+
+            return retval;
+        }
+
+
+        function tag(tag, text) {
+            return '<' + tag + '>' + text + '</' + tag + '>';
+        }
+
+        function getId(title, year) {
+            return title.replace(/\s+/g, '').replace(/[^a-z0-9]/ig, '').toLowerCase() + year;
+        }
+
+        function getGoogleMapsLink(venue, address) {
+            const maps = 'https://maps.google.com/maps?f=d&saddr=&daddr=' + encodeURI(address);
+            return '<h3><a href="' + maps + '" target="_blank">' + venue + '</a></h3>';
+        }
+
+        function e2v(e, v) {
+            v = "gsx$" + v
+            return e[v].$t
+        }
+
+        function filterFor(entry, columnName, value)
+        {
+            var cell  = e2v(entry, columnName);
+            var retval = false;
+            
+            if( cell == value )
+                retval = true;
+            
+            return retval;            
+        }
+            
+        function filterForPartners(entry) {
+            return filterFor( entry, 'sponsorship-partnership-level', 'Partner' );
+        }
+        
+        function filterForSuperheros(entry) {
+            return filterFor( entry, 'sponsorship-partnership-level', 'Community Superhero' );
+        }
+        
+        function filterForChampions(entry) {
+            return filterFor( entry, 'sponsorship-partnership-level', 'Community Champion' );
+        }
+        
+        function filterForFriends(entry) {
+            return filterFor( entry, 'sponsorship-partnership-level', 'Village Builder Friend' );
+        }
+        
+        function entriesToNames(entry) {
+            var year = e2v(entry, 'year');
+            var name = e2v(entry, 'sponsor-name');
+            var website = e2v(entry, 'website-url');
+//            var image  = 		e2v(entry,'logo-url');
+//            var address = 		e2v(entry,'address');
+            var id = getId(name, year);
+
+            if (website)
+                name = anchor(id, name, website);
+
+            return name;
+        }
+        
+        // map
+        function stringToHtmlListItem(string)
+        {
+            return tag('li', string);
+        }
+        
+        // reduce
+        function arrayToSingleArrayItem( value, item )
+        {
+            value[0] += item;
+            return value;
+        }
+        
+        // reduce
+        function arrayToString( value, item )
+        {
+            value += item;
+            return value;
+        }
+        
+        // map
+        function unorderedList(string)
+        {
+            if( string == '' )
+                return string;
+               
+            return '<ul id="double" class="sponsors">' + string + '</ul>'  
+        }
+
+        function headerFor(header, string)
+        {
+            return '<br/><strong>' + header + '</strong><br/>' + string + '&nbsp;<br/>';
+        }
+        
+        // map
+        function headerForPartners(string)
+        {
+            if( string == '' )
+                return string;
+            
+            return headerFor( 'Partners', string );
+        }
+        
+        // map
+        function headerForSuperheros(string)
+        {
+            if( string == '' )
+                return string;
+            
+            return headerFor( 'Community Superheroes', string );
+        }
+        
+        // map
+        function headerForChampions(string)
+        {
+            if( string == '' )
+                return string;
+            
+            return headerFor( 'Community Champions', string );
+        }
+        
+        // map
+        function headerForFriends(string)
+        {
+            if( string == '' )
+                return string;
+            
+            return headerFor( 'Village Builder Friends', string );
+        }
+        
+         //this will be executed after we "fetch" the contents of a spreadsheet. The json parameter will hold our spreadsheet's data
+        function displayContent(json) {
+            //start an html table and write out our headers.  Using <td> tags so it isn't bold and centered, which is the <th> default.
+            //Create an empty string to hold the HTML. We will put table data here.
+            var actual_html = '';
+
+            //figure out how many rows our spreadsheet has
+            var len = json.feed.entry.length
+
+            //loop through the spreadsheet, gathering data
+
+            var partners   = json.feed.entry.filter( filterForPartners );
+            var superheros = json.feed.entry.filter( filterForSuperheros );
+            var champions  = json.feed.entry.filter( filterForChampions );
+            var friends    = json.feed.entry.filter( filterForFriends );
+            
+            partners = partners.map( entriesToNames ).map( stringToHtmlListItem )
+                .reduce( arrayToSingleArrayItem, [''] ).map(unorderedList).map(headerForPartners)
+                .reduce( arrayToString, '' );
+            actual_html += partners;            
+            
+            superheros = superheros.map( entriesToNames )
+                .map( stringToHtmlListItem )
+                .reduce( arrayToSingleArrayItem, [''] )
+                .map(unorderedList)
+                .map(headerForSuperheros)
+                .reduce( arrayToString, '' );
+            actual_html += superheros;
+            
+            champions = champions.map( entriesToNames )
+                .map( stringToHtmlListItem )
+                .reduce( arrayToSingleArrayItem, [''] )
+                .map(unorderedList)
+                .map(headerForChampions)
+                .reduce( arrayToString, '' );
+            actual_html += champions;
+            
+            friends = friends.map( entriesToNames )
+                .map( stringToHtmlListItem )
+                .reduce( arrayToSingleArrayItem, [''] )
+                .map(unorderedList)
+                .map(headerForFriends)
+                .reduce( arrayToString, '' );
+            actual_html += friends;
+                        
+            //put all three of our HTML strings into our div we made at the top of the page
+            document.getElementById('sponsors').innerHTML = actual_html
+
+        }
+         //-->
+    </script>
+
+    <div id="sponsors">
+    </div>
+
+    <script src="https://spreadsheets.google.com/feeds/list/1Y2feuSrSBLoRDptOp9qLHIb0dlBbPZMa-7hbm4VcUzc/od6/public/values?alt=json-in-script&amp;callback=displayContent" type="text/javascript"></script>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+padding-top: (@paddingTop * 15px);
+padding-bottom: (@paddingBottom * 15px);
+& when (@bg-type = 'color') {
+  background-color: @bg-value;
+}
+& when (@bg-type = 'image') {
+  background-image: url(@bg-value);
+  .mbr-overlay {
+    background-color: @overlayColor;
+    opacity: @overlayOpacity;
+  }
+}
+.card-img {
+  amp-img {
+    border-radius: 15px 15px 0 0;
+  }
+  & when not (@flexDirection) {
+    padding: 0;
+    amp-img {
+      border-radius: 15px 0 0 15px;
+    }
+  }
+}
+.card-wrapper {
+  border-radius: 15px;
+  background-color: @cardsBg;
+  & when not (@flexDirection) {
+    justify-content: space-between;
+  }
+}
+.card-box {
+  padding: 40px 20px;
+  & when not (@flexDirection) {
+    padding-right: 70px;
+  }
+}
+.icons-list {
+  .iconfont-wrapper {
+    width: ~"@{iconsSize}rem";
+    height: ~"@{iconsSize}rem";
+    display: inline-block;
+  }
+  .amp-iconfont {
+    font-size: ~"@{iconsSize}rem";
+    width: ~"@{iconsSize}rem";
+    color: @primaryColor;
+    vertical-align: middle;
+  }
+}
+.title-wrap {
+  width: 100%;
+}
+& when not (@flexDirection) {
+  @media (min-width: 768px) {
+    .card-box {
+      padding-left: 2rem;
+    }
+  }
+  @media (max-width: 767px) {
+    .card-wrapper {
+      flex-wrap: wrap;
+    }
+    .card-box {
+      padding-top: 1rem;
+    }
+  }
+}
+.img-overlay {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 15px 15px 0 0;
+}
+& when (@imgGradient) {
+  .card-img {
+    position: relative;
+    &:hover {
+      .img-overlay {
+        transition: 0.5s;
+        background: linear-gradient(45deg, @leftColor, @rightColor);
+        opacity: 0.8;
+        z-index: 999;
+      }
+    }
+  }
+}

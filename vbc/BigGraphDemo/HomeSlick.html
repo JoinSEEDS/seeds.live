@@ -1,0 +1,62 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="slick/slick.css" />
+    <style>
+       
+        body {
+            background: #00f;
+        }
+        #carousel {
+            width: 480px;
+            padding-left: 100px !important;
+            padding-right: 5px !important;
+        }
+        .single-item {
+            height: 20px;
+          
+            display: inline;
+            background: #f00;
+            margin-left: 10%;
+            margin-right: 10%;
+            
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="carousel">
+        <div class="your-class">
+            <div class="single-item">A</div>
+            <div class="single-item">B</div>
+            <div class="single-item">C</div>
+            <div class="single-item">D</div>
+            <div class="single-item">E</div>
+            <div class="single-item">F</div>
+            <div class="single-item">G</div>
+            <div class="single-item">H</div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="slick/slick.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.your-class').slick({
+                infinite: true,
+                slidesToShow: 2,
+                slidesToScroll: 1,
+                arrows: true,
+                dots: true
+            });
+        });
+    </script>
+
+
+
+</body>
+
+</html>
