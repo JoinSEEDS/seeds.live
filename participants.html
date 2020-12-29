@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html amp>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+    <link rel="shortcut icon" href="assets/images/logo-96x96-1.png" type="image/x-icon">
+    <meta name="description" content="">
+    <meta name="amp-script-src" content="">
+    <link href="https://fonts.googleapis.com/css?family=Comic+Neue:300,300i,400,400i,700,700i&amp;display=swap"
+        rel="stylesheet">
+
+    <title>Participants | seeds.live</title>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://www.jsviews.com/download/jsrender.js"></script>
+    <script src="js/isotope.pkgd.min.js"></script>
+    <script src="js/packery-mode.pkgd.min.js"></script>
+
+
+    <script>
+        function winLoad(callback) {
+            if (document.readyState === 'complete') {
+                callback();
+
+            }
+            else {
+                window.addEventListener("load", callback);
+            }
+        }
+
+        winLoad(
+            function () {
+
+                let datasource = "https://seedslive.genblue.workers.dev/participants?view=Speakers%20%28published%29";
+
+                getData(datasource, (data) => {
+                    console.log({ data })
+
+                    // var $ = window.jsrender;                                  // JsRender namespace, used instead of jQuery object 
+                    // var markup = document.getElementById("speakersTmpl").innerHTML; // Get template markup from script block contents
+                    // var tmpl = $.templates(markup);                           // Compile template from markup string
+
+                    var tmpl = $.templates("#speakersTmpl");
+
+
+                    var html = tmpl.render(data);                             // Render template using data - as HTML string
+                    document.getElementById("result").innerHTML = html;
+
+                    // ISOTOPE
+                    var $grid = $('.grid').isotope({
+                        // options
+                        layoutMode: 'packery',
+
+                        packery: {
+                            gutter: 15,
+
+                        },
+                        itemSelector: '.skill-card',
+                        percentPosition: true
+                    });
+
+                    // var elem = document.querySelector('.grid');
+                    // var iso = new Isotope(elem, {
+                    //     // options
+                    //     layoutMode: 'packery',
+
+                    //     packery: {
+                    //         gutter: 15,
+
+                    //     },
+                    //     itemSelector: '.skill-card',
+                    //     percentPosition: true
+
+                    // });
+
+                    // // filter items on button click
+                    // $('.filter-button-group').on('click', 'button', function () {
+                    //     var filterValue = $(this).attr('data-filter');
+                    //     iso({ filter: filterValue });
+                    // });
+
+                    // store filter for each group
+                    var filters = [];
+
+                    console.log('init!');
+
+                    $('.filters').on('click', 'button', function (event) {
+
+                        console.log('onclick');
+
+                        var $target = $(event.currentTarget);
+                        $target.toggleClass('is-checked');
+                        var isChecked = $target.hasClass('is-checked');
+                        var filter = $target.attr('data-filter');
+                        if (isChecked) {
+                            addFilter(filter);
+                        } else {
+                            removeFilter(filter);
+                        }
+                        // filter isotope
+                        // group filters together, inclusive
+                        $grid.isotope({ filter: filters.join(',') });
+                    });
+
+                    function addFilter(filter) {
+                        if (filters.indexOf(filter) == -1) {
+                            filters.push(filter);
+                        }
+                    }
+
+                    function removeFilter(filter) {
+                        var index = filters.indexOf(filter);
+                        if (index != -1) {
+                            filters.splice(index, 1);
+                        }
+                    }
+
+                });
+            }
+        );
+
+
+        function getData(url, cb) {
+            fetch(url)
+                .then(response => response.json())
+                .then(result => cb(result));
+        }
+
+        var filterFns = {
+            // show if number is greater than 50
+            speakers: function (itemElem) {
+                // use itemElem argument for item element
+                var number = itemElem.querySelector('.number').textContent;
+                return parseInt(number, 10) > 50;
+            },
+
+            // show if name ends with -ium
+            ium: function (itemElem) {
+                var number = itemElem.querySelector('.name').textContent;
+                return name.match(/ium$/);
+            }
+        };
+    </script>
+
+    <script id="speakersTmpl" type="text/x-jsrender">
+
+    {{for records}}                        
+        <div class="skill-card{{for fields.Type}} {{:}}{{/for}}">
+            <header class="skill-card__header"><img class="skill-card__icon"
+                    src="{{:fields.Attachments[0].thumbnails.large.url}}" alt="HTML5 Logo" /></header>
+            <section class="skill-card__body">
+                <h2 class="skill-card__title">{{:fields.Name}}</h2>
+                
+                <span class="skill-card__duration">{{:fields.Affiliation}}</span>
+                
+                <div class="skill-card__tags">
+                    {{for fields.Type}}
+                        <p>{{:}}</p>
+                    {{/for}}
+                </div>
+            
+                <p class="skill-card__knowledge">
+                    {{:fields.Bio}}
+                </p>
+                
+                <!-- <ul class="skill-card__knowledge">
+                    <li>HTML5</li>
+                    <li>Sémantique</li>
+                    <li>SVG</li>
+                    <li>Canvas</li>
+                </ul> -->
+            </section>
+        </div>
+    {{/for}}
+    
+</script>
+
+
+    <style>
+        /* body,
+        html {
+            background-color: #EEE;
+            font-family: "Open Sans", sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #000;
+        } */
+
+
+
+        .button {
+            display: inline-block;
+            padding: 0.5em 1.0em;
+            background: #EEE;
+            border: none;
+            border-radius: 7px;
+            background-image: linear-gradient(to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.2));
+            color: #222;
+            font-family: sans-serif;
+            font-size: 16px;
+            text-shadow: 0 1px white;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #8CF;
+            text-shadow: 0 1px hsla(0, 0%, 100%, 0.5);
+            color: #222;
+        }
+
+        .button:active,
+        .button.is-checked {
+            background-color: #28F;
+        }
+
+        .button.is-checked {
+            color: white;
+            text-shadow: 0 -1px hsla(0, 0%, 0%, 0.8);
+        }
+
+        .button:active {
+            box-shadow: inset 0 1px 10px hsla(0, 0%, 0%, 0.8);
+        }
+
+        /* ---- button-group ---- */
+
+        .button-group:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+
+        .button-group .button {
+            float: left;
+            border-radius: 0;
+            margin-left: 0;
+            margin-right: 1px;
+        }
+
+        .button-group .button:first-child {
+            border-radius: 0.5em 0 0 0.5em;
+        }
+
+        .button-group .button:last-child {
+            border-radius: 0 0.5em 0.5em 0;
+        }
+
+        .skill-card__tags {
+
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .skill-card__tags p {
+            margin: .8em .4em;
+            color: #eee;
+            padding: .5em 1em;
+            background: #3c66ad;
+            font-size: .8em;
+            font-weight: bold;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+        }
+
+        .grid-sizer {
+            width: 5%;
+        }
+
+        .grid {
+            padding: 40;
+            width: 100%;
+        }
+
+        .grid:after {
+            content: '';
+            display: block;
+            clear: both;
+        }
+
+        .skill-card {
+            position: absolute;
+            /* top: 50%;
+            left: 80%; */
+            transform: translateX(10%);
+            padding: 20px;
+            width: 40%;
+            background-color: #FFF;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            cursor: pointer;
+        }
+
+        .skill-card:hover {
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        }
+
+        .skill-card:hover .skill-card__header .skill-card__icon {
+            transform: translateX(-50%) translateY(-50%) scale(3);
+        }
+
+        /** **/
+        .skill-card .skill-card__body {
+            height: 440px;
+            transition: height 0.5s;
+            overflow: hidden;
+        }
+
+        .skill-card .skill-card__header {
+            position: relative;
+            background-color: #eb6c3f;
+            height: 240px;
+            margin: -20px -20px 20px -20px;
+            transition: height 0.5s;
+            overflow: hidden;
+        }
+
+        .skill-card:hover .skill-card__header {
+            height: 0px;
+        }
+
+        .skill-card:hover .skill-card__body {
+            height: 680px;
+        }
+
+        .skill-card:hover .skill-card__body .skill-card__knowledge p {
+            transform: translateX(0);
+            transition-timing-function: cubic-bezier(0, 1.5, 1, 1);
+            transition-duration: 0.5s;
+        }
+
+        .skill-card:hover .skill-card__body .skill-card__knowledge li {
+            transform: translateX(0);
+            transition-timing-function: cubic-bezier(0, 1.5, 1, 1);
+            transition-duration: 0.5s;
+        }
+
+        .skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(1) {
+            transition-delay: 0.25s;
+        }
+
+        .skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(2) {
+            transition-delay: 0.5s;
+        }
+
+        .skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(3) {
+            transition-delay: 0.75s;
+        }
+
+        .skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(4) {
+            transition-delay: 1s;
+        }
+
+        .skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(5) {
+            transition-delay: 1.25s;
+        }
+
+        .skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(6) {
+            transition-delay: 1.5s;
+        }
+
+        .skill-card .skill-card__header .skill-card__icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateY(-50%) translateX(-50%);
+            display: block;
+            /* width: 100%; */
+            /* height: 100%; */
+            transition: transform 0.5s;
+        }
+
+        .skill-card .skill-card__body .skill-card__title {
+            font-size: 1.4em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .skill-card .skill-card__body .skill-card__duration {
+            color: #9E9E9E;
+            font-style: italic;
+        }
+
+        .skill-card .skill-card__body .skill-card__knowledge {
+            margin-top: 10px;
+            color: #424242;
+        }
+
+        .skill-card .skill-card__body .skill-card__knowledge li {
+            margin-top: 5px;
+            transition-duration: 0;
+            transition-delay: 0.5s;
+            transform: translateX(-100%);
+        }
+
+        /* HEADER & FOOTER */
+
+
+        body {
+            box-sizing: border-box;
+            outline: none;
+            text-size-adjust: 100%;
+            font-style: normal;
+            line-height: 1.5;
+            color: #000000;
+            min-height: 100vh;
+            font-family: Didact Gothic;
+            height: auto !important;
+            margin: 0 !important;
+            overflow: visible !important;
+            position: relative !important;
+            opacity: 1;
+            visibility: visible;
+            animation: 0s ease 0s 1 normal none running none;
+        }
+
+        #team1-23>div>div>h4 {
+            text-size-adjust: 100%;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            margin: 0;
+            padding: 0;
+            word-break: break-word;
+            width: 100%;
+            color: #ffffff;
+            padding-top: 1rem;
+            font-family: 'Comic Neue', handwriting;
+            font-size: calc(1.525rem + (2.5 - 1.525) * ((100vw - 20rem) / (48 - 20)));
+            line-height: calc(1.4 * (1.525rem + (2.5 - 1.525) * ((100vw - 20rem) / (48 - 20))));
+            letter-spacing: -1px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        #team1-23>div>div>h3>a {
+            text-size-adjust: 100%;
+            visibility: visible;
+            word-break: break-word;
+            text-shadow: 0 2px 4.8px rgba(30, 29, 50, 0.3);
+            letter-spacing: -1px;
+            text-align: left;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            color: #1bc2ca;
+            transition: 0.2s ease-in-out;
+        }
+
+        #team1-23>div>div>h3 {
+            text-size-adjust: 100%;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            word-break: break-word;
+            margin: 0;
+            padding: 0;
+            font-style: normal;
+            width: 100%;
+            color: #ffffff;
+            padding-bottom: 2rem;
+            font-family: 'Comic Neue', handwriting;
+            font-size: calc(1.175rem + (1.5 - 1.175) * ((100vw - 20rem) / (48 - 20)));
+            line-height: calc(1.4 * (1.175rem + (1.5 - 1.175) * ((100vw - 20rem) / (48 - 20))));
+            text-shadow: 0 2px 4.8px rgba(30, 29, 50, 0.3);
+            letter-spacing: -1px;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .cid-skxRQ8qREd .mbr-section-subtitle {
+            text-align: center;
+        }
+
+        .display-2 {
+            font-family: 'Comic Neue', handwriting;
+            font-size: 2.5rem;
+            line-height: 1.2;
+        }
+
+        #team1-23>div {
+            text-size-adjust: 100%;
+            font-style: normal;
+            line-height: 1.5;
+            color: #000000;
+            font-family: Didact Gothic;
+            visibility: visible;
+        }
+
+        #team1-23>div>div {
+            text-size-adjust: 100%;
+            font-style: normal;
+            line-height: 1.5;
+            color: #000000;
+            font-family: Didact Gothic;
+            visibility: visible;
+        }
+
+        #team1-23>div>div>h3 {
+            text-size-adjust: 100%;
+            font-style: normal;
+            line-height: 1.5;
+            color: #000000;
+            font-family: Didact Gothic;
+            visibility: visible;
+        }
+
+        #team1-23>div>div>h3>a {
+            text-size-adjust: 100%;
+            visibility: visible;
+            word-break: break-word;
+            text-shadow: 0 2px 4.8px rgba(30, 29, 50, 0.3);
+            letter-spacing: -1px;
+            text-align: left;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            color: #1bc2ca;
+            transition: 0.2s ease-in-out;
+        }
+
+        .cid-skxRQ8qREd {
+            text-size-adjust: 100%;
+            font-style: normal;
+            line-height: 1.5;
+            color: #000000;
+            font-family: Didact Gothic;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+            background-size: cover;
+            overflow: hidden;
+            padding: 30px 0;
+            position: relative;
+            padding-top: 30px;
+            padding-bottom: 45px;
+            background-color: #141229;
+        }
+
+        h4.display-2 {
+            text-size-adjust: 100%;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            margin: 0;
+            padding: 0;
+            word-break: break-word;
+            width: 100%;
+            color: #ffffff;
+            padding-top: 1rem;
+            font-family: 'Comic Neue', handwriting;
+            font-size: calc(1.525rem + (2.5 - 1.525) * ((100vw - 20rem) / (48 - 20)));
+            line-height: calc(1.4 * (1.525rem + (2.5 - 1.525) * ((100vw - 20rem) / (48 - 20))));
+            letter-spacing: -1px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        #footer1-1e {
+            text-size-adjust: 100%;
+            font-style: normal;
+            line-height: 1.5;
+            color: #000000;
+            font-family: Didact Gothic;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+            background-size: cover;
+            overflow: hidden;
+            padding: 30px 0;
+            position: relative;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            background-color: #141229;
+        }
+
+        #footer1-1e>div {
+            text-size-adjust: 100%;
+            color: #000000;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            position: relative;
+            padding: 0 1rem;
+            width: 100%;
+            margin-right: auto;
+            margin-left: auto;
+            max-width: 540px;
+        }
+
+        #footer1-1e>div>div.mbr-row.link-items.mbr-jc-c.mbr-fonts-style.display-7 {
+            text-size-adjust: 100%;
+            color: #000000;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            word-break: break-word;
+            justify-content: center;
+            display: flex;
+            flex-wrap: wrap;
+            font-family: 'Comic Neue', handwriting;
+            font-size: calc(1rem + (1 - 1) * ((100vw - 20rem) / (48 - 20)));
+            line-height: calc(1.4 * (1rem + (1 - 1) * ((100vw - 20rem) / (48 - 20))));
+            margin: 0;
+            margin-bottom: 1rem;
+        }
+
+        #footer1-1e>div>div.mbr-row.link-items.mbr-jc-c.mbr-fonts-style.display-7>p {
+            text-size-adjust: 100%;
+            visibility: visible;
+            word-break: break-word;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            letter-spacing: 0.5px;
+            margin-bottom: 0;
+            margin-top: 0;
+            font-style: normal;
+            line-height: 1.6;
+            color: #ffffff;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            width: auto;
+        }
+
+        #footer1-1e>div>div.copyright.mbr-px-2.mbr-flex.mbr-jc-c {
+            text-size-adjust: 100%;
+            color: #000000;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            display: flex;
+            justify-content: center;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        #footer1-1e>div>div.copyright.mbr-px-2.mbr-flex.mbr-jc-c>p {
+            text-size-adjust: 100%;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            letter-spacing: 0.5px;
+            margin-bottom: 0;
+            margin-top: 0;
+            word-break: break-word;
+            font-style: normal;
+            width: 100%;
+            text-align: center;
+            font-family: 'Comic Neue', handwriting;
+            font-size: calc(1rem + (1 - 1) * ((100vw - 20rem) / (48 - 20)));
+            line-height: calc(1.4 * (1rem + (1 - 1) * ((100vw - 20rem) / (48 - 20))));
+            color: #ffffff;
+        }
+
+        #team1-23 {
+            text-size-adjust: 100%;
+            font-style: normal;
+            line-height: 1.5;
+            color: #000000;
+            font-family: Didact Gothic;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+            background-size: cover;
+            overflow: hidden;
+            padding: 30px 0;
+            position: relative;
+            padding-top: 30px;
+            padding-bottom: 45px;
+            background-color: #141229;
+        }
+
+        #team1-23>div>div>h3 {
+            text-size-adjust: 100%;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            word-break: break-word;
+            margin: 0;
+            padding: 0;
+            font-style: normal;
+            width: 100%;
+            color: #ffffff;
+            padding-bottom: 2rem;
+            font-family: 'Comic Neue', handwriting;
+            font-size: calc(1.175rem + (1.5 - 1.175) * ((100vw - 20rem) / (48 - 20)));
+            line-height: calc(1.4 * (1.175rem + (1.5 - 1.175) * ((100vw - 20rem) / (48 - 20))));
+            text-shadow: 0 2px 4.8px rgba(30, 29, 50, 0.3);
+            letter-spacing: -1px;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        #team1-23>div>div>h3>a {
+            text-size-adjust: 100%;
+            visibility: visible;
+            word-break: break-word;
+            text-shadow: 0 2px 4.8px rgba(30, 29, 50, 0.3);
+            letter-spacing: -1px;
+            text-align: left;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            color: #1bc2ca;
+            transition: 0.2s ease-in-out;
+        }
+
+        #team1-23>div {
+            text-size-adjust: 100%;
+            color: #000000;
+            visibility: visible;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            position: relative;
+            padding: 0 1rem;
+            width: 100%;
+            margin-right: auto;
+            margin-left: auto;
+            max-width: 540px;
+        }
+
+        .filters {
+            padding-left: 10%;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .filters .ui-group {
+            text-align: center;
+        }
+
+        .filters .button-group .js-radio-button-group {
+            text-align: center;
+        }
+    </style>
+
+<body>
+
+    <section class="team1 cid-skxRQ8qREd" id="team1-23">
+
+        <!--  -->
+        <div class="container">
+            <div class="title align-center">
+                <h3 class="mbr-section-title mbr-bold mbr-fonts-style mbr-white mbr-pb-4 display-5"><a href="index.html"
+                        class="text-primary">&lt; Back</a></h3>
+                <h4 class="mbr-section-subtitle mbr-pt-2 mbr-fonts-style mbr-white display-2">Participants</h4>
+            </div>
+
+        </div>
+    </section>
+
+
+    <div class="filters">
+        <div class="ui-group">
+            <div class="button-group js-radio-button-group">
+                <button class="button" data-filter=".Speaker">Speakers</button>
+                <button class="button" data-filter=".Performer">Performers</button>
+                <button class="button" data-filter=".Vocalist">Vocalists</button>
+                <button class="button" data-filter=".Musician">Musicians</button>
+                <button class="button" data-filter=".Artist">Artists</button>
+                <button class="button" data-filter=".Poet">Poets</button>
+                <button class="button" data-filter=".Producer">Producers</button>
+                <button class="button" data-filter=".Host">Hosts</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result" class="grid"></div>
+
+    <section class="footer1 cid-ske9qVhXUa" id="footer1-1e">
+
+        <div class="footer-container container">
+            <div class="mbr-row link-items mbr-jc-c mbr-fonts-style display-7">
+
+
+                <p class="mbr-text fLink mbr-px-1 mbr-white"><a href="index.html#header2-3"
+                        class="text-white"></a>Artwork
+                    by Brad Eaton</p>
+                <p class="mbr-text fLink mbr-px-1 mbr-white">|</p>
+                <p class="mbr-text fLink mbr-px-1 mbr-white">Revision 0.6.54</p>
+            </div>
+            <div class="copyright mbr-px-2 mbr-flex mbr-jc-c">
+                <p class="mbr-text mbr-fonts-style mbr-white align-center display-7"><a
+                        href="https://creativecommons.org/licenses/by/4.0/" class="text-primary"
+                        target="_blank">Creative
+                        Commons Attribution 4.0 International License</a><br>(Except where otherwise noted)</p>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>
