@@ -80,6 +80,7 @@
                         $target.toggleClass('is-checked');
                         var isChecked = $target.hasClass('is-checked');
                         var filter = $target.attr('data-filter');
+
                         if (isChecked) {
                             addFilter(filter);
                         } else {
@@ -220,6 +221,7 @@
             border-radius: 0 0.5em 0.5em 0;
         }
 
+
         .skill-card__tags {
 
             display: flex;
@@ -242,7 +244,7 @@
             position: absolute;
             /* top: 50%;
             left: 80%; */
-            transform: translateX(10%);
+            /* transform: translateX(10%); */
             padding: 20px;
             width: 100%;
             min-width: 300px;
@@ -251,6 +253,8 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
             cursor: pointer;
         }
+
+       
 
         .grid-sizer {
             width: 10%;
@@ -284,6 +288,7 @@
             /* top: 50%; */
             /* left: 10%; */
             /* transform: translateX(10%); */
+            border-radius: 25px;
             width: 80%;
             padding: 20px;
             /* min-width: 300px;
@@ -291,6 +296,22 @@
             background-color: #FFF;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
             cursor: pointer;
+        }
+
+        .Speaker {
+            background-color: #ADCCFF;
+        }
+
+        .Music {
+            background-color: #CDFFEB;
+        }
+        
+        .Ceremony {
+            background-color: #FFFEE5;
+        }
+
+        .Fireside {
+            background-color: #FFC1CA;
         }
 
         .skill-card:hover {
@@ -795,7 +816,8 @@
     <div class="filters">
         <div class="ui-group">
             <div class="button-group js-radio-button-group">
-                <button class="button" data-filter=".Speaker">Speakers</button>
+                <!-- <button class="button is-checked" value="selected" data-filter="">No Filter</button> -->
+                <button class="button" data-filter=".Speaker">Speaker</button>
                 <button class="button" data-filter=".Music">Music</button>
                 <button class="button" data-filter=".Ceremony">Ceremony</button>
                 <button class="button" data-filter=".Fireside Chat">Fireside Chat</button>
