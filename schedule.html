@@ -55,11 +55,16 @@
                         // options
 
                         itemSelector: '.skill-card',
-                        layoutMode: 'packery',
+
+                       layoutMode: 'packery',
 
                         packery: {
                             gutter: 15,
-                        }
+                            // columnWidth: 360,
+                            // itemSelector: '.skill-card',
+                        },
+                        itemSelector: '.skill-card',
+                        percentPosition: true
                     });
 
                     // store filter for each group
@@ -233,37 +238,51 @@
             border-radius: 5px;
         }
 
-        .grid-container {
-            margin: 0 auto;
+        .skill-card {
+            position: absolute;
+            /* top: 50%;
+            left: 80%; */
+            transform: translateX(10%);
+            padding: 20px;
+            width: 100%;
+            min-width: 300px;
+            /* max-width: 350px; */
+            background-color: #FFF;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            cursor: pointer;
+        }
+
+        .grid-sizer {
+            width: 10%;
         }
 
         .grid {
-
-            width: 100%;
-            /* width: 100%; */
-            /* margin: 0 auto; */
+            
             display: flex;
             justify-content: center;
+        }
 
+        .grid-container {
+            /* width: 1000; */
+             display: flex;
+            justify-content: center;
         }
 
         .grid:after {
             content: '';
             display: block;
             clear: both;
-            display: flex;
         }
 
         .skill-card-conatiner {
             display: flex;
             justify-content: center;
-
         }
 
         .skill-card {
             /* position: absolute; */
             /* top: 50%; */
-            left: 10%;
+            /* left: 10%; */
             /* transform: translateX(10%); */
             width: 80%;
             padding: 20px;
@@ -306,11 +325,11 @@
             height: 540px;
         }
 
-        .skill-card:hover .skill-card__body .skill-card__knowledge p {
+        /* .skill-card:hover .skill-card__body .skill-card__knowledge p {
             transform: translateX(0);
             transition-timing-function: cubic-bezier(0, 1.5, 1, 1);
             transition-duration: 0.5s;
-        }
+        } */
 
         .skill-card:hover .skill-card__body .skill-card__knowledge li {
             transform: translateX(0);
