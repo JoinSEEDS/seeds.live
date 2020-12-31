@@ -274,9 +274,16 @@
         }
 
         .grid {
-            padding-left: 10%;
-            width: 100%;
-            margin: 0 auto;
+            
+             display: flex;
+            justify-content: center;
+            
+        }
+
+        .grid-container {
+            width: 1000;
+             display: flex;
+            justify-content: center;
         }
 
         .grid:after {
@@ -405,7 +412,20 @@
         }
 
         /* HEADER & FOOTER */
-
+        .text-primary {
+            text-size-adjust: 100%;
+            visibility: visible;
+            letter-spacing: 0.5px;
+            word-break: break-word;
+            text-align: center;
+            box-sizing: border-box;
+            outline: none;
+            font: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            color: #1bc2ca;
+            transition: 0.2s ease-in-out;
+        }
 
         body {
             box-sizing: border-box;
@@ -753,11 +773,10 @@
         }
 
         .filters {
-            padding-left: 10%;
             padding-top: 20px;
             padding-bottom: 20px;
-            text-align: center;
-            width: 100%;
+            display: flex;
+            justify-content: center;
         }
 
         .filters .ui-group {
@@ -800,7 +819,9 @@
         </div>
     </div>
 
-    <div id="result" class="grid"></div>
+    <div class="grid-container">
+        <div id="result" class="grid"></div>
+    </div>
 
     <section class="footer1 cid-ske9qVhXUa" id="footer1-1e">
 
